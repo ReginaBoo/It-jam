@@ -3,8 +3,6 @@
     <AppHeader v-model="searchQuery" @login="navigateToLogin" @register="navigateToRegister"
       @category-selected="handleCategorySelected" />
 
-    <CategoryFilter v-model="filterCategory" :categories="categories" @filter-changed="applyFilters" />
-
     <HeroContent @search="handleSearch" :popular-places="popularPlaces" />
 
     <v-container>
@@ -38,7 +36,6 @@ import YandexMap from '@/components/HomeComp/YandexMap.vue'
 import PlaceList from '@/components/HomeComp/PlaceList.vue'
 import PlaceDetailsDialog from '@/components/HomeComp/PlaceDetailsDialog.vue'
 import RouteDialog from '@/components/HomeComp/RouteDialog.vue'
-import CategoryFilter from '@/components/HomeComp/CategoryFilter.vue'
 import { fetchPlaces, fetchPlaceDetails, calculateRoute } from '@/api/places'
 
 const { t } = useI18n()

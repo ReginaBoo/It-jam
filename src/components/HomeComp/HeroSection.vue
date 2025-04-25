@@ -4,29 +4,72 @@
       <h1 class="hero-title">Найдите лучшие места в городе</h1>
       <div class="search-container">
         <div class="search-tabs">
-          <button class="search-tab active">Все</button>
-          <button class="search-tab">Рестораны</button>
-          <button class="search-tab">Достопримечательности</button>
-          <button class="search-tab">Отели</button>
+          <button class="search-tab" :class="{ active: selectedCategory === 'all' }" @click="selectedCategory = 'all'">
+            Все
+          </button>
+          <button class="search-tab" :class="{ active: selectedCategory === 'restaurant' }"
+            @click="selectedCategory = 'restaurant'">
+            Рестораны
+          </button>
+          <button class="search-tab" :class="{ active: selectedCategory === 'attraction' }"
+            @click="selectedCategory = 'attraction'">
+            Достопримечательности
+          </button>
+          <button class="search-tab" :class="{ active: selectedCategory === 'hotel' }"
+            @click="selectedCategory = 'hotel'">
+            Отели
+          </button>
         </div>
-        <div class="search-bar">
-          <v-text-field placeholder="Например: 'итальянская кухня'" solo flat hide-details
-            prepend-inner-icon="mdi-magnify" class="search-input"></v-text-field>
-          <v-btn color="red darken-1" dark large class="search-button">
-            Найти
-          </v-btn>
+
+        <div class="rating-slider-container">
+          <label class="rating-label">Минимальный рейтинг: {{ minRating }}</label>
+          <v-slider v-model="minRating" :min="0" :max="5" :step="0.1" thumb-label class="rating-slider"></v-slider>
         </div>
+      </div>
+
+      <div v-if="filteredPosts.length > 0" class="posts-container">
+        <div v-for="post in filteredPosts" :key="post.id" class="post">
+          <h3>{{ post.title }}</h3>
+          <v-map :center="post.location" :zoom="13" class="mini-map">
+            <v-marker :position="post.location"></v-marker>
+          </v-map>
+          <p>Рейтинг: {{ post.rating }}</p>
+        </div>
+      </div>
+      <div v-else class="no-posts">
+        <p>Посты не найдены для выбранной категории или рейтинга.</p>
       </div>
     </div>
   </section>
 </template>
-
 <script>
 export default {
-  name: 'HeroSection'
-}
+  name: 'HeroSection',
+  data() {
+    return {
+      selectedCategory: 'all',
+      searchQuery: '',
+      minRating: 0, // ← Добавлен фильтр по рейтингу
+      posts: [
+        { id: 1, title: 'Лучший ресторан', category: 'restaurant', location: { lat: 55.7558, lng: 37.6173 }, rating: 4.5 },
+        { id: 2, title: 'Туристическая достопримечательность', category: 'attraction', location: { lat: 55.751244, lng: 37.618423 }, rating: 4.8 },
+        { id: 3, title: 'Уютный отель', category: 'hotel', location: { lat: 55.755, lng: 37.6177 }, rating: 4.2 },
+        { id: 4, title: 'Знаменитый ресторан', category: 'restaurant', location: { lat: 55.756, lng: 37.618 }, rating: 4.7 }
+      ]
+    };
+  },
+  computed: {
+    filteredPosts() {
+      return this.posts.filter(post => {
+        const matchesCategory = this.selectedCategory === 'all' || post.category === this.selectedCategory;
+        const matchesQuery = post.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+        const matchesRating = post.rating >= this.minRating;
+        return matchesCategory && matchesQuery && matchesRating;
+      });
+    }
+  }
+};
 </script>
-
 <style scoped>
 .hero-section {
   background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
@@ -99,13 +142,6 @@ export default {
   flex-grow: 1;
 }
 
-.search-input :deep(.v-input__slot) {
-  box-shadow: none !important;
-  background: #fff !important;
-  border: 1px solid #ddd !important;
-  border-radius: 4px !important;
-}
-
 .search-button {
   margin-left: 10px;
   text-transform: none;
@@ -113,59 +149,62 @@ export default {
   letter-spacing: normal;
 }
 
-.popular-searches {
+.posts-container {
   margin-top: 20px;
-  font-size: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 0 20px;
 }
 
-.popular-link {
-  color: white;
-  margin-left: 15px;
-  text-decoration: underline;
+.post {
+  width: 100%;
+  max-width: 300px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  box-sizing: border-box;
+  color: #333;
+  /* Основной цвет текста для поста */
 }
 
-.popular-link:hover {
-  color: #f8f8f8;
+.post h3 {
+  color: #d32323;
+  /* Цвет для заголовков */
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-  .hero-section {
-    height: 400px;
-  }
+.post p {
+  color: #666;
+  /* Цвет для параграфов */
+}
 
-  .hero-title {
-    font-size: 2rem;
-  }
+.mini-map {
+  height: 200px;
+  width: 100%;
+  border-radius: 4px;
+}
 
-  .search-tabs {
-    overflow-x: auto;
-    padding-bottom: 5px;
-  }
+.no-posts {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #999;
+}
 
-  .search-bar {
-    flex-direction: column;
-  }
+.rating-slider-container {
+  margin: 10px 0;
+}
 
-  .search-button {
-    margin-left: 0;
-    margin-top: 10px;
-    width: 100%;
-  }
+.rating-label {
+  margin-top: 5px;
+  margin: 0 0;
+  font-size: 1.0rem;
+  color: #333;
+  align-self: flex-start;
+}
 
-  .popular-searches {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .popular-searches span {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-
-  .popular-link {
-    margin: 0 8px 5px 0;
-  }
+.rating-slider {
+  margin: 0 0;
 }
 </style>
