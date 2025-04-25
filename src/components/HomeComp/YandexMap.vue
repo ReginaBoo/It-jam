@@ -8,6 +8,11 @@
       <button @click="clearRoute" class="route-button">
         Очистить маршрут
       </button>
+            <select v-model="selectedTransport" class="transport-select">
+        <option value="auto">Автомобиль</option>
+        <option value="masstransit">Общественный транспорт</option>
+        <option value="pedestrian">Пешком</option>
+      </select>
       <div v-if="routeInfo" class="route-info">
         <p>Расстояние: {{ routeInfo.distance }}</p>
         <p>Время в пути: {{ routeInfo.duration }}</p>
@@ -25,13 +30,15 @@ import { ref, onMounted, computed } from 'vue'
 
 const mapContainer = ref(null)
 let map = null
-let route = null
 let placemarks = []
 const isCreatingRoute = ref(false)
 const routeInfo = ref(null)
 const errorMessage = ref(null)
+const selectedTransport = ref('auto') // По умолчанию автомобиль
+const avoidTraffic = ref(false)
+let multiRoute = null
 
-const hasRoute = computed(() => route !== null)
+const hasRoute = computed(() => multiRoute !== null)
 
 onMounted(() => {
   loadYmaps()
@@ -106,33 +113,62 @@ async function buildRoute() {
   
   const points = placemarks.map(p => p.geometry.getCoordinates())
   
-  // Удаляем предыдущий маршрут
-  if (route) {
-    map.geoObjects.remove(route)
-    route = null
+  if (multiRoute) {
+    map.geoObjects.remove(multiRoute)
+    multiRoute = null
   }
   
-  // Строим новый маршрут
-  route = await window.ymaps.route(points, {
-    mapStateAutoApply: true,
-    boundsAutoApply: true,
-    routingMode: 'auto',
-    avoidTrafficJams: true
-  })
+  // const MultiRoute = window.ymaps.multiRouter
+  const routeType = selectedTransport.value
   
-  // Настраиваем отображение маршрута
-  route.options.set({
-    routeStrokeWidth: 5,
-    routeStrokeColor: '#88a35b',
-    routeActiveStrokeWidth: 7,
-    routeActiveStrokeColor: '#6a7f46'
-  })
-  
-  map.geoObjects.add(route)
+  const routeOptions = {
+    referencePoints: points,
+    params: {
+      routingMode: routeType,
+      avoidTrafficJams: routeType === 'driving' && avoidTraffic.value
+    }
+  }
+
+  switch(routeType) {
+    case 'masstransit':
+      multiRoute = new ymaps.multiRouter.MultiRoute({
+        referencePoints: points,
+        params: {
+            routingMode: 'masstransit'
+        }
+      }, {
+        // Автоматически устанавливать границы карты так, чтобы маршрут был виден целиком.
+        boundsAutoApply: true
+      });
+      break
+    case 'pedestrian':
+      multiRoute = new ymaps.multiRouter.MultiRoute({
+        referencePoints: points,
+        params: {
+            //Тип маршрутизации - пешеходная маршрутизация.
+            routingMode: 'pedestrian'
+        }
+    }, {
+        // Автоматически устанавливать границы карты так, чтобы маршрут был виден целиком.
+        boundsAutoApply: true
+    });
+      break
+    default: // driving
+      multiRoute = new ymaps.multiRouter.MultiRoute({
+        referencePoints: points,
+        params: {
+          results: 2
+        }
+    }, {
+        // Автоматически устанавливать границы карты так, чтобы маршрут был виден целиком.
+        boundsAutoApply: true
+    });
+  }
+  map.geoObjects.add(multiRoute)
   // updateRouteInfo()
   console.log(hasRoute)
   // Центрируем карту на маршруте
-  map.setBounds(route.getBounds(), { checkZoomRange: true })
+  map.setBounds(multiRoute.getBounds(), { checkZoomRange: true })
 
 }
 
@@ -160,9 +196,9 @@ function clearPlacemarks() {
 }
 
 function clearRoute() {
-  if (route) {
-    map.geoObjects.remove(route)
-    route = null
+  if (multiRoute) {
+    map.geoObjects.remove(multiRoute)
+    multiRoute = null
   }
   clearPlacemarks()
   routeInfo.value = null
@@ -180,7 +216,7 @@ function clearRoute() {
 
 .route-button {
   padding: 8px 16px;
-  background-color: #88a35b;
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
