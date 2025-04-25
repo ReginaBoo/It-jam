@@ -1,4 +1,5 @@
-from app import db
+from app import db  # Импортируем db из приложения
+from sqlalchemy import CheckConstraint
 
 class User(db.Model):
     __tablename__ = 'User'
@@ -6,7 +7,7 @@ class User(db.Model):
     _id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     passwordHash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(50), nullable=False)
+    role = db.Column(db.String(50), nullable=False, default='user')
     preferredLanguage = db.Column(db.String(2))
 
 class Place(db.Model):
@@ -20,9 +21,12 @@ class Place(db.Model):
     type = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(255))
     createdBy = db.Column(db.Integer, db.ForeignKey('User._id'))
-    status = db.Column(db.String(50), nullable=False, 
-                       default='pending', 
-                       check=db.CheckConstraint("status IN ('pending', 'approved', 'rejected')"))
+    status = db.Column(db.String(50), nullable=False)
+    
+    __table_args__ = (
+        CheckConstraint('type IN ("cafe", "pharmacy", "atm", "landmark")', name='check_type'),
+        CheckConstraint('status IN ("pending", "approved", "rejected")', name='check_status'),
+    )
 
 class Review(db.Model):
     __tablename__ = 'Review'
@@ -32,10 +36,10 @@ class Review(db.Model):
     userId = db.Column(db.Integer, db.ForeignKey('User._id'))
     rating = db.Column(db.Integer)
     text = db.Column(db.Text)
-    photos = db.Column(db.Text)  # Хранение фото как ссылки
-    likes = db.Column(db.Text)   # Хранение лайков как строки
+    photos = db.Column(db.Text)
+    likes = db.Column(db.Text)
     status = db.Column(db.String(50))
-    createdAt = db.Column(db.String(20))  # Дата и время отзыва
+    createdAt = db.Column(db.String(20))
 
 class Favorite(db.Model):
     __tablename__ = 'Favorite'
