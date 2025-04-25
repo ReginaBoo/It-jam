@@ -1,5 +1,6 @@
 from app import db  # Импортируем db из приложения
 print(db)
+from sqlalchemy import CheckConstraint
 
 class User(db.Model):
     __tablename__ = 'User'
@@ -21,7 +22,12 @@ class Place(db.Model):
     type = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(255))
     createdBy = db.Column(db.Integer, db.ForeignKey('User._id'))
-    status = db.Column(db.String(50))
+    status = db.Column(db.String(50), nullable=False)
+    
+    __table_args__ = (
+        CheckConstraint('type IN ("cafe", "pharmacy", "atm", "landmark")', name='check_type'),
+        CheckConstraint('status IN ("pending", "approved", "rejected")', name='check_status'),
+    )
 
 class Review(db.Model):
     __tablename__ = 'Review'
