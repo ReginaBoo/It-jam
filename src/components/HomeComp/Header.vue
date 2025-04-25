@@ -5,22 +5,24 @@
       <v-toolbar-title class="text-red-darken-1 font-weight-bold text-h5">HeroMap</v-toolbar-title>
     </div>
 
-    <!-- Поле поиска по категориям -->
-    <div class="search-container">
-      <v-autocomplete v-model="selectedCategory" :items="categories" placeholder="Выберите категорию..."
-        prepend-inner-icon="mdi-magnify" solo flat dense hide-details class="search-field mx-2"
-        style="max-width: 450px; min-width: 200px;" @keyup.enter="searchPlaces">
-        <template #selection="{ item }">
-          {{ item.title }}
+    <!-- Выпадающий список категорий -->
+    <div class="categories-container">
+      <v-menu offset-y>
+        <template v-slot:activator="{ props }">
+          <v-btn color="red-darken-1" dark depressed v-bind="props" class="categories-btn">
+            <v-icon left>mdi-menu</v-icon>
+            Категории
+          </v-btn>
         </template>
-        <template #item="{ item }">
-          <v-icon left :color="item.color">{{ item.icon }}</v-icon>
-          {{ item.title }}
-        </template>
-      </v-autocomplete>
-      <v-btn color="red-darken-1" dark depressed class="search-button" @click="searchPlaces">
-        Найти
-      </v-btn>
+        <v-list>
+          <v-list-item v-for="(item, index) in categories" :key="index" @click="selectCategory(item.value)">
+            <v-list-item-title>
+              <v-icon left :color="item.color">{{ item.icon }}</v-icon>
+              {{ item.title }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </div>
 
     <!-- Кнопки авторизации -->
@@ -36,11 +38,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const selectedCategory = ref(null)
 
 const categories = [
   { title: 'Рестораны', value: 'restaurants', icon: 'mdi-food', color: 'red' },
@@ -51,27 +51,29 @@ const categories = [
   { title: 'Парки', value: 'parks', icon: 'mdi-tree', color: 'green' },
 ]
 
-const searchPlaces = () => {
-  if (selectedCategory.value) {
-    router.push({
-      name: 'map',
-      query: { category: selectedCategory.value }
-    })
-  }
+const selectCategory = (category) => {
+  // Эмитим событие с выбранной категорией
+  emit('category-selected', category)
+  // Или переходим сразу на маршрут
+  router.push({
+    name: 'map',
+    query: { category }
+  })
 }
 
-defineProps({
-  modelValue: String
-})
-
-defineEmits([
-  'update:modelValue',
-  'login',
-  'register'
-])
+defineEmits(['login', 'register', 'category-selected'])
 </script>
 
 <style scoped>
+categories-container {
+  margin-left: 16px;
+}
+
+.categories-btn {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .yelp-header {
   padding: 0 24px;
   gap: 16px;
