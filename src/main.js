@@ -1,20 +1,22 @@
-// src/main.js
 import { createApp } from 'vue'
 import App from './App.vue'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import router from './router' // <== Добавь это
-               // <== И это
+import { createPinia } from 'pinia' // Импортируем Pinia
+import router from './router' // Подключаем маршрутизатор
 
+const pinia = createPinia() // Создаем экземпляр Pinia
 const vuetify = createVuetify({
   components,
   directives,
 })
 
 const app = createApp(App)
-app.use(vuetify)
-app.use(router)
-app.mount('#app')
 
+app.use(pinia) // Подключаем Pinia
+app.use(vuetify) // Подключаем Vuetify
+app.use(router) // Подключаем Vue Router
+
+app.mount('#app') // Монтируем приложение

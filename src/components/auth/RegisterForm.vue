@@ -1,36 +1,32 @@
-<script setup>
-  import { reactive } from 'vue'
-  import { useAuthStore } from '@/stores/authStore'
-  import { useRouter } from 'vue-router'
-  
-  const authStore = useAuthStore()
-  const router = useRouter()
-  const form = reactive({
-    username: '',
-    password: '',
-    preferredLanguage: 'ru'
-  })
-  
-  const handleRegister = async () => {
-    try {
-      await authStore.register(form.username, form.password, form.preferredLanguage)
-      router.push('/login')
-    } catch (error) {
-      alert(error.response?.data?.error || 'Registration failed')
-    }
-  }
-</script>
 <template>
-    <form @submit.prevent="handleRegister">
-        <input v-model="form.username" placeholder="Username" required>
-        <input v-model="form.password" type="password" placeholder="Password" required>
-        <select v-model="form.preferredLanguage">
-            <option value="ru">Русский</option>
-            <option value="en">English</option>
-        </select>
-        <button type="submit">Register</button>
-    </form>
+  <v-form @submit.prevent="handleRegister">
+    <v-text-field v-model="form.username" label="Username" required></v-text-field>
+    <v-text-field v-model="form.password" type="password" label="Password" required></v-text-field>
+    <v-select v-model="form.preferredLanguage" :items="['ru', 'en']" label="Preferred Language" required></v-select>
+    <v-btn type="submit" color="primary">Зарегистрироваться</v-btn>
+  </v-form>
 </template>
-  
-  
-  
+
+<script setup>
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const form = ref({
+  username: '',
+  password: '',
+  preferredLanguage: 'ru'
+})
+
+const handleRegister = async () => {
+  try {
+    await authStore.register(form.value.username, form.value.password, form.value.preferredLanguage)
+    router.push('/login') // Перенаправление на страницу логина после регистрации
+  } catch (error) {
+    alert(error.response?.data?.error || 'Ошибка при регистрации')
+  }
+}
+</script>
