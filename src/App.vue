@@ -1,10 +1,9 @@
 <template>
-  <v-app>
+  <div>
     <!-- Хедер -->
     <v-app-bar app>
       <v-toolbar-title class="text-red-500">HeroMap</v-toolbar-title>
-      <v-text-field v-model="searchQuery" placeholder="Поиск кафе, достопримечательностей..." append-icon="mdi-magnify"
-        label="Поиск" solo />
+      <v-text-field v-model="searchQuery" placeholder="Поиск..." append-icon="mdi-magnify" label="Поиск" solo />
     </v-app-bar>
 
     <!-- Категории -->
@@ -27,7 +26,7 @@
         </v-card-actions>
       </v-card>
     </main>
-  </v-app>
+  </div>
 </template>
 
 <script setup>
@@ -80,9 +79,3 @@ const showDetails = (place) => {
   alert(`Подробнее о ${place.name}`)
 }
 </script>
-
-<style>
-body {
-  font-family: 'Inter', sans-serif;
-}
-</style>
