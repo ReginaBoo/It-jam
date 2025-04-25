@@ -6,8 +6,6 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { createPinia } from 'pinia' // Импортируем Pinia
-import router from './router' // Подключаем маршрутизатор
 
 const pinia = createPinia() // Создаем экземпляр Pinia
 const vuetify = createVuetify({
