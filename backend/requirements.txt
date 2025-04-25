@@ -1,0 +1,6 @@
+Flask==2.3.2
+Flask-SQLAlchemy==3.1.1  # Важно: версия 3.x
+SQLAlchemy==2.0.25       # Совместимая версия
+Flask-Cors==4.0.0
+gunicorn==21.2.0
+python-dotenv==1.0.0
