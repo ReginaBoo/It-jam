@@ -1,24 +1,24 @@
 <template>
-  <v-app-bar app color="white" elevation="2">
-    <!-- Логотип и название - теперь занимают меньше места -->
-    <div class="d-flex align-center" style="min-width: 180px;">
-      <v-toolbar-title class="text-red-500 font-weight-bold">HeroMap</v-toolbar-title>
+  <v-app-bar app color="white" elevation="2" class="yelp-header">
+    <!-- Логотип -->
+    <div class="d-flex align-center logo-container">
+      <v-toolbar-title class="text-red-darken-1 font-weight-bold text-h5">HeroMap</v-toolbar-title>
     </div>
 
-    <!-- Поле поиска - сдвинуто влево и адаптивное -->
-    <v-text-field :model-value="modelValue" @update:modelValue="$emit('update:modelValue', $event)"
-      placeholder="Поиск кафе, достопримечательностей..." prepend-inner-icon="mdi-magnify" solo flat dense hide-details
-      class="mx-2" style="max-width: 450px; min-width: 200px; flex-grow: 1;" />
 
-    <!-- Кнопки авторизации - теперь прижимаются к правому краю -->
-    <div class="d-flex" style="margin-left: auto;">
-      <v-btn text color="primary" class="mr-2" @click="$emit('login')">
-        <v-icon left>mdi-login</v-icon>
+
+    <!-- Поле поиска -->
+    <v-text-field :model-value="modelValue" @update:modelValue="$emit('update:modelValue', $event)"
+      placeholder="Найти..." prepend-inner-icon="mdi-magnify" solo flat dense hide-details class="search-field mx-2"
+      style="max-width: 450px; min-width: 200px;" />
+
+    <!-- Кнопки авторизации -->
+    <div class="auth-buttons">
+      <v-btn text color="grey-darken-3" class="mr-2 font-weight-medium" @click="$emit('login')">
         Вход
       </v-btn>
 
-      <v-btn color="primary" outlined @click="$emit('register')">
-        <v-icon left>mdi-account-plus</v-icon>
+      <v-btn color="red-darken-1" dark depressed class="signup-btn font-weight-medium" @click="$emit('register')">
         Регистрация
       </v-btn>
     </div>
@@ -38,20 +38,74 @@ defineEmits([
 </script>
 
 <style scoped>
-.v-app-bar {
-  padding: 0 16px;
-  gap: 8px;
-  /* Добавляем промежутки между элементами */
+.yelp-header {
+  padding: 0 24px;
+  gap: 16px;
+}
+
+.logo-container {
+  min-width: 120px;
+}
+
+.header-links {
+  gap: 4px;
+}
+
+.search-field {
+  background-color: #f5f5f5 !important;
+  border-radius: 4px !important;
+}
+
+.search-field :deep(.v-input__slot) {
+  box-shadow: none !important;
+}
+
+.auth-buttons {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.signup-btn {
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 /* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-  .v-toolbar__title {
-    display: none;
+@media (max-width: 960px) {
+  .yelp-header {
+    padding: 0 12px;
   }
 
-  .v-app-bar {
-    padding: 0 8px;
+  .header-links {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .logo-container {
+    min-width: auto;
+    margin-right: 8px;
+  }
+
+  .v-toolbar__title {
+    font-size: 1.25rem !important;
+  }
+
+  .search-field {
+    min-width: 120px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .auth-buttons {
+    margin-left: 8px;
+  }
+
+  .auth-buttons .v-btn {
+    min-width: auto !important;
+    padding: 0 8px !important;
   }
 }
 </style>
