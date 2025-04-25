@@ -2,17 +2,23 @@
   <div>
     <div ref="mapContainer" style="width: 100%; height: 500px;"></div>
     <div class="route-controls">
-      <button @click="startRouteCreation" class="route-button">
+      <v-btn dark depressed color="red-darken-1" @click="startRouteCreation" class="route-button">
         {{ isCreatingRoute ? 'Отменить' : 'Построить маршрут' }}
-      </button>
-      <button @click="clearRoute" class="route-button">
+      </v-btn>
+      <v-btn @click="clearRoute" class="route-button">
         Очистить маршрут
-      </button>
-            <select v-model="selectedTransport" class="transport-select">
-        <option value="auto">Автомобиль</option>
-        <option value="masstransit">Общественный транспорт</option>
-        <option value="pedestrian">Пешком</option>
-      </select>
+      </v-btn>
+      <v-select
+        v-model="selectedTransport"
+        label="Тип маршрута"
+        :items="transportOptions"
+        variant="solo"
+        density="comfortable"
+        hide-details
+        class="transport-select"
+        @update:modelValue="handleTransportChange"
+      ></v-select>
+      
       <div v-if="routeInfo" class="route-info">
         <p>Расстояние: {{ routeInfo.distance }}</p>
         <p>Время в пути: {{ routeInfo.duration }}</p>
@@ -37,6 +43,12 @@ const errorMessage = ref(null)
 const selectedTransport = ref('auto') // По умолчанию автомобиль
 const avoidTraffic = ref(false)
 let multiRoute = null
+
+const transportOptions = [
+  { title: 'Автомобиль', value: 'auto' },
+  { title: 'Общественный транспорт', value: 'masstransit' },
+  { title: 'Пешком', value: 'pedestrian' }
+];
 
 const hasRoute = computed(() => multiRoute !== null)
 
@@ -128,6 +140,7 @@ async function buildRoute() {
       avoidTrafficJams: routeType === 'driving' && avoidTraffic.value
     }
   }
+  
 
   switch(routeType) {
     case 'masstransit':
@@ -214,19 +227,19 @@ function clearRoute() {
   flex-wrap: wrap;
 }
 
-.route-button {
+/* .route-button {
   padding: 8px 16px;
-  background-color: #4CAF50;
+  background-color: #F44336;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
-}
+} */
 
-.route-button:hover {
+/* .route-button:hover {
   background-color: #45a049;
-}
+} */
 
 .route-button:disabled {
   background-color: #cccccc;
