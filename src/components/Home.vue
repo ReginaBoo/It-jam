@@ -1,15 +1,32 @@
 <!-- src/components/Home.vue -->
 <template>
-  <v-app>
+<v-app>
+    <!-- Хедер с кнопками навигации -->
     <v-app-bar app color="primary">
       <v-toolbar-title class="text-white">HeroMap</v-toolbar-title>
-      <v-text-field 
-        v-model="searchQuery"
-        placeholder="Поиск..."
-        append-icon="mdi-magnify"
-        label="Поиск"
-        solo
-      />
+      
+      <v-spacer></v-spacer>
+      
+      <!-- Кнопка Войти -->
+      <v-btn 
+        @click="navigateToLogin"
+        color="white" 
+        variant="text"
+        class="mr-2"
+      >
+        <v-icon left>mdi-login</v-icon>
+        Войти
+      </v-btn>
+      
+      <!-- Кнопка Регистрация -->
+      <v-btn 
+        @click="navigateToRegister"
+        color="white" 
+        variant="outlined"
+      >
+        <v-icon left>mdi-account-plus</v-icon>
+        Регистрация
+      </v-btn>
     </v-app-bar>
 
     <v-main>
@@ -55,6 +72,19 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// Обработчик перехода на страницу входа
+const navigateToLogin = () => {
+  router.push('/login')
+}
+
+// Обработчик перехода на страницу регистрации
+const navigateToRegister = () => {
+  router.push('/register')
+}
 
 const searchQuery = ref('')
 const filterCategory = ref('Все')
