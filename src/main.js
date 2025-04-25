@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import router from './router' // Добавьте эту строку
+import { createPinia } from 'pinia' // Добавьте для работы хранилища
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
@@ -20,3 +22,4 @@ app.use(vuetify) // Подключаем Vuetify
 app.use(router) // Подключаем Vue Router
 
 app.mount('#app') // Монтируем приложение
+
