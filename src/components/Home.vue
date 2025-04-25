@@ -2,8 +2,12 @@
   <v-app>
     <AppHeader v-model="searchQuery" @login="navigateToLogin" @register="navigateToRegister" />
     <CategoryFilter v-model="filterCategory" :categories="categories" />
+    <div>
+      <HeroContent @search="handleSearch" />
+    </div>
     <YandexMap :places="filteredPlaces" />
     <PlaceList :places="filteredPlaces" @show-details="showDetails" />
+
     <router-view />
   </v-app>
 </template>
@@ -12,7 +16,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/HomeComp/Header.vue'
-
+import HeroContent from '@/components/HomeComp/HeroSection.vue'
 import YandexMap from '@/components/HomeComp/YandexMap.vue'
 
 const router = useRouter()

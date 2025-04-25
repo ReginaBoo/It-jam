@@ -5,6 +5,12 @@ import Home from '@/components/Home.vue' // Импорт компонента Ho
 
 const routes = [
   {
+    path: '/map',
+    name: 'map',
+    component: () => import('@/components/HomeComp/MapView.vue'),
+    props: route => ({ category: route.query.category })
+  },
+  {
     path: '/',
     name: 'home',
     component: Home, // Главная страница
