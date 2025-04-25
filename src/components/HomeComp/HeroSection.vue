@@ -1,7 +1,7 @@
 <template>
   <section class="hero-section">
     <div class="hero-content">
-      <h1 class="hero-title">Найдите лучшие места в вашем городе</h1>
+      <h1 class="hero-title">Найдите лучшие места в городе</h1>
       <div class="search-container">
         <div class="search-tabs">
           <button class="search-tab active">Все</button>
@@ -16,14 +16,6 @@
             Найти
           </v-btn>
         </div>
-      </div>
-      <div class="popular-searches">
-        <span>Популярное:</span>
-        <a href="#" class="popular-link">Завтрак</a>
-        <a href="#" class="popular-link">Обед</a>
-        <a href="#" class="popular-link">Ужин</a>
-        <a href="#" class="popular-link">Доставка</a>
-        <a href="#" class="popular-link">Рядом со мной</a>
       </div>
     </div>
   </section>
